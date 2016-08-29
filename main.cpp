@@ -10,7 +10,7 @@ public:
 /// A source of signals.
 struct SignalSource : public QObject {
     Q_SIGNAL void signal();
-    SignalSource(QObject * parent = nullptr) : QObject{parent} {}
+    explicit SignalSource(QObject * parent = nullptr) : QObject{parent} {}
     Q_OBJECT
 };
 
