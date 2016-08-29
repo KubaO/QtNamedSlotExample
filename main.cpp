@@ -32,7 +32,7 @@ public:
     /// Uses connectSlotsByName to set up the connections instead of QObject::connect().
     explicit Example (QObject *parent = nullptr) : QObject{parent}
     {
-        // We don't create a timer named "noobject", this is to show the type
+        // We don't create an object named "noobject", this is to show the type
         // of warning connectSlotsByName() will generate if no matching object
         // or signal is found.
         QMetaObject::connectSlotsByName(this);
