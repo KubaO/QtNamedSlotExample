@@ -44,9 +44,7 @@ public:
         emit object3.signal();
         Q_ASSERT(count == 3);
     }
-};
+} example;
 
-int main () {
-    Example x;
-}
+int main () {}
 #include "main.moc"
