@@ -1,14 +1,17 @@
 #include <QtCore>
 
+/// A shorthand to create a named instance of a QObject-deriving class
+template <typename T> class Named : public T {
+public:
+    template<typename... Args> Named(const char * name, Args&&... args) :
+        T(std::forward<Args>(args)...) { this->setObjectName(QString::fromUtf8(name)); }
+};
+
 class Example : public QObject {
     Q_OBJECT
-    /// Create a periodic QTimer, set its name, and
-    /// start it with the specified interval (milliseconds).
-    void setupTimer(int interval, const QString & name) {
-        QTimer *timer = new QTimer(this); // <- Part of this object tree.
-        timer->setObjectName(name);       // <- Name will match slot names.
-        timer->start(interval);
-    }
+    Named<QTimer> timer1{"timer1", this};
+    Named<QTimer> timer2{"timer2", this};
+    Named<QTimer> timer3{"timer3", this};
 private slots:
     // These will be automatically connected by connectNamedSlots()
     void on_timer1_timeout() {
@@ -24,15 +27,12 @@ private slots:
     /// to demonstrate runtime warnings.
     void on_notimer_timeout() {}
 public:
-    /// Creates some QTimers then uses connectSlotsByName to
-    /// set up the connections instead of QObject::connect(). Note that we
-    /// don't need to store QTimer*'s to do this, which could be handy in
-    /// some applications.
+    /// Starts the timers then uses connectSlotsByName to
+    /// set up the connections instead of QObject::connect().
     explicit Example (QObject *parent = nullptr) : QObject(parent)
     {
-        setupTimer(1100, "timer1");
-        setupTimer(1700, "timer2");
-        setupTimer(2300, "timer3");
+        // Start the timers
+        for (auto child : findChildren<QTimer*>()) child->start(1000);
         // We don't create a timer named "notimer", this is to show the type
         // of warning connectSlotsByName() will generate if no matching object
         // or signal is found.
