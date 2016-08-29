@@ -4,7 +4,7 @@ class Example : public QObject {
     Q_OBJECT
     /// Create a periodic QTimer, set its name, and
     /// start it with the specified interval (milliseconds).
-    void setupTimer(int interval, QString name) {
+    void setupTimer(int interval, const QString & name) {
         QTimer *timer = new QTimer(this); // <- Part of this object tree.
         timer->setObjectName(name);       // <- Name will match slot names.
         timer->start(interval);
