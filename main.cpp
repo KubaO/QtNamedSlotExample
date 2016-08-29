@@ -10,7 +10,7 @@ public:
 /// A source of signals.
 struct SignalSource : public QObject {
     Q_SIGNAL void signal();
-    SignalSource(QObject * parent = nullptr) : QObject(parent) {}
+    SignalSource(QObject * parent = nullptr) : QObject{parent} {}
     Q_OBJECT
 };
 
@@ -30,7 +30,7 @@ private slots:
     void on_noobject_signal() { ++count; }
 public:
     /// Uses connectSlotsByName to set up the connections instead of QObject::connect().
-    explicit Example (QObject *parent = nullptr) : QObject(parent)
+    explicit Example (QObject *parent = nullptr) : QObject{parent}
     {
         // We don't create a timer named "noobject", this is to show the type
         // of warning connectSlotsByName() will generate if no matching object
