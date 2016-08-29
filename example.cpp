@@ -21,7 +21,7 @@ Example::Example (QObject *parent) :
 
     // We don't create a timer named "notimer", this is to show the type
     // of warning connectSlotsByName() will generate if no matching object
-    // or slot is found.
+    // or signal is found.
 
     QMetaObject::connectSlotsByName(this);
 
