@@ -7,43 +7,44 @@ public:
         T(std::forward<Args>(args)...) { this->setObjectName(QString::fromUtf8(name)); }
 };
 
+/// A source of signals.
+struct SignalSource : public QObject {
+    Q_SIGNAL void signal();
+    SignalSource(QObject * parent = nullptr) : QObject(parent) {}
+    Q_OBJECT
+};
+
 class Example : public QObject {
     Q_OBJECT
-    Named<QTimer> timer1{"timer1", this};
-    Named<QTimer> timer2{"timer2", this};
-    Named<QTimer> timer3{"timer3", this};
+    int count = 0;
+    Named<SignalSource> object1{"object1", this};
+    Named<SignalSource> object2{"object2", this};
+    Named<SignalSource> object3{"object3", this};
 private slots:
     // These will be automatically connected by connectNamedSlots()
-    void on_timer1_timeout() {
-        qDebug("timer1 timeout");
-    }
-    void on_timer2_timeout() {
-        qDebug("timer2 timeout");
-    }
-    void on_timer3_timeout() {
-        qDebug("timer3 timeout");
-    }
+    void on_object1_signal() { ++ count; }
+    void on_object2_signal() { ++ count; }
+    void on_object3_signal() { ++ count; }
     /// In this example, this slot won't be connected to anything,
     /// to demonstrate runtime warnings.
-    void on_notimer_timeout() {}
+    void on_noobject_signal() { ++count; }
 public:
-    /// Starts the timers then uses connectSlotsByName to
-    /// set up the connections instead of QObject::connect().
+    /// Uses connectSlotsByName to set up the connections instead of QObject::connect().
     explicit Example (QObject *parent = nullptr) : QObject(parent)
     {
-        // Start the timers
-        for (auto child : findChildren<QTimer*>()) child->start(1000);
-        // We don't create a timer named "notimer", this is to show the type
+        // We don't create a timer named "noobject", this is to show the type
         // of warning connectSlotsByName() will generate if no matching object
         // or signal is found.
         QMetaObject::connectSlotsByName(this);
+        Q_ASSERT(count == 0);
+        emit object1.signal();
+        emit object2.signal();
+        emit object3.signal();
+        Q_ASSERT(count == 3);
     }
 };
 
-int main (int argc, char *argv[]) {
-    QCoreApplication a(argc, argv);
+int main () {
     Example x;
-    return a.exec();
 }
-
 #include "main.moc"
