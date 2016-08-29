@@ -1,7 +1,9 @@
 #include <QtCore>
+#include <type_traits>
 
 /// A shorthand to create a named instance of a QObject-deriving class
-template <typename T> class Named : public T {
+template <typename T, typename = typename std::enable_if<std::is_base_of<QObject, T>::value>::type>
+class Named : public T {
 public:
     template<typename... Args> Named(const char * name, Args&&... args) :
         T(std::forward<Args>(args)...) { this->setObjectName(QString::fromUtf8(name)); }
